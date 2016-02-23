@@ -11,34 +11,40 @@ public class Board
 
     public Board(int h, int w)
     {
-        System.out.println("initialized board");
-        
         height = h;
         width = w;
 
         currentState = new Tile[height][width];
 
+        for(int i = 0; i < height; i++)
+        {
+            for(int j = 0; j < width; j++)
+            {
+                currentState[i][j] = new Tile();
+            }
+        }
+
         generateNewSquare();
         generateNewSquare();
     }
-    
+
     public void shift(String command)
     {
         if(command.equals("left"))
         {
             shiftLeft();
         }
-        
+
         if(command.equals("right"))
         {
             shiftRight();
         }
-        
+
         if(command.equals("up"))
         {
             shiftUp();
         }
-        
+
         if(command.equals("down"))
         {
             shiftDown();
@@ -47,96 +53,136 @@ public class Board
 
     private void shiftLeft()
     {
-        if(shiftLeftPossible())
+        int shiftPos = -1;
+
+        // loop 1: merge if possible
+        for(int i = 0; i < height; i++)
         {
-            for(int i = 0; i < height; i++)
+            for(int j = 0; j < width - 1; j++)
             {
-                for(int j = 0; j < width - 1; j++)
+                if(currentState[i][j].isFilled())
                 {
-                    if(currentState[i][j].isFilled())
+                    if(currentState[i][j].getSquare() == currentState[i][j + 1].getSquare())
                     {
-                        if(currentState[i][j].getValue() == currentState[i][j + 1].getValue())
+                        currentState[i][j].incrementSquare();
+                        currentState[i][j + 1].deleteSquare();
+                    }
+                }
+            }
+        }
+
+        // loop 2: shift everything left
+        for(int i = 0; i < height; i++)
+        {
+            for(int j = 0; j < width; j++)
+            {
+                if(currentState[i][j].isFilled())
+                {
+                    for(int k = j; k >= 0; k--)
+                    {
+                        if(!currentState[i][k].isFilled())
                         {
-                            currentState[i][j].incrementSquare();
-                            currentState[i][j + 1].deleteSquare();
+                            shiftPos = k;
+                        }
+                    }
+
+                    if(shiftPos != -1)
+                    {
+                        currentState[i][shiftPos].setSquare(currentState[i][j].getSquare());
+                        currentState[i][j].deleteSquare();
+
+                        try
+                        {
+                            if(currentState[i][shiftPos - 1].getSquare() == currentState[i][shiftPos].getSquare())
+                            {
+                                currentState[i][shiftPos - 1].incrementSquare();
+                                currentState[i][shiftPos].deleteSquare();
+                            }
+                        }
+                        catch(ArrayIndexOutOfBoundsException e)
+                        {
+                            // do nothing
                         }
                     }
                 }
             }
-            
-            generateNewSquare();
         }
-        
+
+        generateNewSquare();
     }
 
     private void shiftRight()
     {
-        if(shiftRightPossible())
+        int shiftPos = -1;
+
+        // loop 1: merge if possible
+        for(int i = 0; i < height; i++)
         {
-            for(int i = 0; i < height; i++)
+            for(int j = width - 1; j > 0; j--)
             {
-                for(int j = width - 1; j > 0; j--)
+                if(currentState[i][j].isFilled())
                 {
-                    if(currentState[i][j].isFilled())
+                    if(currentState[i][j].getSquare() == currentState[i][j - 1].getSquare())
                     {
-                        if(currentState[i][j].getValue() == currentState[i][j - 1].getValue())
+                        currentState[i][j].incrementSquare();
+                        currentState[i][j - 1].deleteSquare();
+                    }
+                }
+            }
+        }
+
+        // loop 2: shift everything right
+        for(int i = 0; i < height; i++)
+        {
+            for(int j = width - 1; j >= 0; j--)
+            {
+                if(currentState[i][j].isFilled())
+                {
+                    for(int k = j; k < width; k++)
+                    {
+                        if(!currentState[i][k].isFilled())
                         {
-                            currentState[i][j].incrementSquare();
-                            currentState[i][j - 1].deleteSquare();
+                            shiftPos = k;
+                        }
+                    }
+
+                    if(shiftPos != -1)
+                    {
+                        currentState[i][shiftPos].setSquare(currentState[i][j].getSquare());
+                        currentState[i][j].deleteSquare();
+
+                        try
+                        {
+                            if(currentState[i][shiftPos + 1].getSquare() == currentState[i][shiftPos].getSquare())
+                            {
+                                currentState[i][shiftPos + 1].incrementSquare();
+                                currentState[i][shiftPos].deleteSquare();
+                            }
+                        }
+                        catch(ArrayIndexOutOfBoundsException e)
+                        {
+                            // do nothing
                         }
                     }
                 }
             }
-            
-            generateNewSquare();
-        }     
+        }
+
+        generateNewSquare();
     }
 
     private void shiftUp()
     {
-        if(shiftUpPossible())
-        {
-            for(int i = 0; i < height - 1; i++)
-            {
-                for(int j = 0; j < width; j++)
-                {
-                    if(currentState[i][j].isFilled())
-                    {
-                        if(currentState[i][j].getValue() == currentState[i + 1][j].getValue())
-                        {
-                            currentState[i][j].incrementSquare();
-                            currentState[i + 1][j].deleteSquare();
-                        }
-                    }
-                }
-            }
-            
-            generateNewSquare();
-        }
+
     }
 
     private void shiftDown()
     {
-        if(shiftDownPossible())
-        {
-            for(int i = height - 1; i > 0; i--)
-            {
-                for(int j = 0; j < width; j++)
-                {
-                    if(currentState[i][j].isFilled())
-                    {
-                        if(currentState[i][j].getValue() == currentState[i - 1][j].getValue())
-                        {
-                            currentState[i][j].incrementSquare();
-                            currentState[i - 1][j].deleteSquare();
-                        }
-                    }
-                }
-            }
-            
-            generateNewSquare();
-        }
+
     }
+
+    // TODO: include searching for empty spaces
+    // TODO: are these methods even necessary?
 
     private boolean shiftLeftPossible()
     {
@@ -146,7 +192,7 @@ public class Board
             {
                 if(currentState[i][j].isFilled())
                 {
-                    if(currentState[i][j].getValue() == currentState[i][j + 1].getValue())
+                    if(currentState[i][j].getSquare() == currentState[i][j + 1].getSquare())
                     {
                         return true;
                     }
@@ -165,14 +211,14 @@ public class Board
             {
                 if(currentState[i][j].isFilled())
                 {
-                    if(currentState[i][j].getValue() == currentState[i][j - 1].getValue())
+                    if(currentState[i][j].getSquare() == currentState[i][j - 1].getSquare())
                     {
                         return true;
                     }
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -184,14 +230,14 @@ public class Board
             {
                 if(currentState[i][j].isFilled())
                 {
-                    if(currentState[i][j].getValue() == currentState[i + 1][j].getValue())
+                    if(currentState[i][j].getSquare() == currentState[i + 1][j].getSquare())
                     {
                         return true;
                     }
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -203,14 +249,14 @@ public class Board
             {
                 if(currentState[i][j].isFilled())
                 {
-                    if(currentState[i][j].getValue() == currentState[i - 1][j].getValue())
+                    if(currentState[i][j].getSquare() == currentState[i - 1][j].getSquare())
                     {
                         return true;
                     }
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -233,7 +279,7 @@ public class Board
         }
     }
 
-    private boolean gameOver()
+    public boolean gameOver()
     {
         // basic case: if there is an unfilled tile, the game is not over
         for(int i = 0; i < height; i++)
@@ -249,26 +295,28 @@ public class Board
 
         if(shiftLeftPossible() | shiftRightPossible() | shiftUpPossible() | shiftDownPossible())
         {
-            return true;
+
+            return false;
         }
-        
-        return false;
+
+        System.out.println("Game over");
+        return true;
     }
-    
+
     public String toString()
     {
         String returnString = "";
-        
+
         for(int i = 0; i < height; i++)
         {
             for(int j = 0; j < width; j++)
             {
-                returnString += currentState[i][j].getValue() + " ";
+                returnString += currentState[i][j].getSquare() + " ";
             }
-            
+
             returnString += "\n";
         }
-        
+
         return returnString;
     }
 }

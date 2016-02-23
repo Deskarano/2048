@@ -1,9 +1,19 @@
+import java.util.Scanner;
+
 public class GUIHandler
 {
-	public static void main(String[] args)
-	{
-		Board mainBoard = new Board(4, 4);
-		
-		System.out.println(mainBoard);
-	}
+    public static void main(String[] args)
+    {
+        Board mainBoard = new Board(5, 5);
+        Scanner input = new Scanner(System.in);
+
+        while(!mainBoard.gameOver())
+        {
+            System.out.println(mainBoard);
+            System.out.println("Next move: ");
+            mainBoard.shift(input.nextLine());
+            System.out.println();
+        }
+
+    }
 }

@@ -16,12 +16,17 @@ public class Square
         else
         {
             exponent = 1;
-        }
+        }  
     }
 
     public int getExponent()
     {
         return exponent;
+    }
+
+    public void setExponent(int exp)
+    {
+        exponent = exp;
     }
 
     public void incrementExponent()
