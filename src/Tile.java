@@ -1,60 +1,52 @@
+import java.util.Random;
+
 public class Tile
 {
-    private Square mainSquare;
-    private boolean containsSquare;
+    private int exponent;
+
+    private static Random randGen = new Random();
 
     public Tile()
     {
-        containsSquare = false;
-        mainSquare = new Square();
+        exponent = 0;
     }
 
     public boolean isFilled()
     {
-        return containsSquare;
+        return exponent != 0;
     }
 
     public void generateSquare()
     {
-        mainSquare = new Square();
-        containsSquare = true;
+        randGen.setSeed(System.nanoTime());
+
+        if(randGen.nextInt(10) == 0)
+        {
+            exponent = 2;
+        }
+        else
+        {
+            exponent = 1;
+        }
     }
 
     public void deleteSquare()
     {
-        // mainSquare will just be overwritten the next time the tile is
-        // accessed
-        containsSquare = false;
+        exponent = 0;
     }
 
     public void incrementSquare()
     {
-        mainSquare.incrementExponent();
+        exponent++;
     }
 
-    public void setSquare(int exponent)
+    public void setSquare(int exp)
     {
-        mainSquare.setExponent(exponent);
-
-        if(exponent == 0)
-        {
-            containsSquare = false;
-        }
-        else
-        {
-            containsSquare = true;
-        }
+        exponent = exp;
     }
 
     public int getSquare()
     {
-        if(!containsSquare)
-        {
-            return 0;
-        }
-        else
-        {
-            return mainSquare.getExponent();
-        }
+        return exponent;
     }
 }
