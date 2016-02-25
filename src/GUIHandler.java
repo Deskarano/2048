@@ -2,18 +2,19 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+
 public class GUIHandler
 {
     private static JFrame component_mainFrame;
-
-    private static JTextArea component_mainTextArea;
-    
+    private static JTextPane component_mainTextArea;
     private static JScrollPane component_mainScrollPane;
 
     private static GridBagConstraints constraints_mainTextArea;
+    
+    private static final Font mainFont = new Font("Main", Font.PLAIN, 16);
 
-    private static final int BOARDHEIGHT = 4;
-    private static final int BOARDWIDTH = 4;
+    private static final int BOARDHEIGHT = 8;
+    private static final int BOARDWIDTH = 8;
 
     private static Board mainBoard;
 
@@ -24,8 +25,17 @@ public class GUIHandler
         instantiate_constraints();
         instantiate_finalize();
 
-        mainBoard = new Board(4, 4);
+        mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH);
         update_text("");
+        
+        while(!mainBoard.gameOver())
+        {
+        	mainBoard.performRandomMove();
+        	update_text("");
+        }  
+        
+        System.out.println(mainBoard.getNumMoves());
+        System.out.println(mainBoard.getScore());
     }
 
     private static void instantiate_frame()
@@ -33,13 +43,15 @@ public class GUIHandler
         component_mainFrame = new JFrame("2048");
         component_mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         component_mainFrame.setLayout(new GridBagLayout());
-        component_mainFrame.setResizable(false);
+        component_mainFrame.setResizable(true);
     }
 
     private static void instantiate_components()
     {
-        component_mainTextArea = new JTextArea();
+        component_mainTextArea = new JTextPane();
         component_mainTextArea.setEditable(false);
+        component_mainTextArea.setFont(mainFont);
+        component_mainTextArea.setSize(new Dimension(BOARDHEIGHT, BOARDWIDTH));
         
         component_mainScrollPane = new JScrollPane(component_mainTextArea);
         
@@ -92,8 +104,8 @@ public class GUIHandler
         constraints_mainTextArea = new GridBagConstraints();
         constraints_mainTextArea.gridx = 0;
         constraints_mainTextArea.gridy = 0;
-        constraints_mainTextArea.gridwidth = 5;
-        constraints_mainTextArea.gridheight = 5;
+        constraints_mainTextArea.gridwidth = 1;
+        constraints_mainTextArea.gridheight = 1;
         constraints_mainTextArea.ipadx = 500;
         constraints_mainTextArea.ipady = 500;
         constraints_mainTextArea.insets = new Insets(5, 5, 5, 5);
@@ -103,7 +115,6 @@ public class GUIHandler
     private static void instantiate_finalize()
     {
         component_mainFrame.add(component_mainScrollPane, constraints_mainTextArea);
-
 
         component_mainFrame.pack();
         component_mainFrame.setVisible(true);
@@ -120,7 +131,7 @@ public class GUIHandler
             {
                 if(data[r][c] == 0)
                 {
-                    printString += "-\t";
+                    printString += ".\t";
                 }
                 else
                 {
