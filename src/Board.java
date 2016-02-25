@@ -2,77 +2,103 @@ import java.util.Random;
 
 public class Board
 {
-    private Tile[][] currentState;
+    private int[][] currentState;
     private int height;
     private int width;
+    private int score;
+
     private static Random randGen = new Random();
-    
-    public static final String LEFTCOMMAND = "l";
-    public static final String RIGHTCOMMAND = "r";
-    public static final String UPCOMMAND = "u";
-    public static final String DOWNCOMMAND = "d";
+
+    public static final String LEFT = "l";
+    public static final String RIGHT = "r";
+    public static final String UP = "u";
+    public static final String DOWN = "d";
+
+    public static final int PROBABILITY = 10;
 
     public Board(int h, int w)
     {
         height = h;
         width = w;
 
-        currentState = new Tile[height][width];
+        score = 0;
+
+        currentState = new int[height][width];
 
         for(int i = 0; i < height; i++)
         {
             for(int j = 0; j < width; j++)
             {
-                currentState[i][j] = new Tile();
+                currentState[i][j] = 0;
             }
         }
 
         generateNewSquare();
         generateNewSquare();
     }
-    
-    public Board(int h, int w, int[][] startState)
+
+    public Board(int[][] startState)
     {
-        height = h;
-        width = w;
-        
-        currentState = new Tile[height][width];
-        
+        height = startState.length;
+        width = startState[0].length;
+
+        score = 0;
+
+        currentState = new int[height][width];
+
         for(int i = 0; i < height; i++)
         {
             for(int j = 0; j < width; j++)
             {
-                currentState[i][j] = new Tile();
-                currentState[i][j].setSquare(startState[i][j]);
+                currentState[i][j] = startState[i][j];
             }
         }
     }
 
     public void shift(String command)
     {
-        if(command.equals(LEFTCOMMAND))
+        if(command.equals(LEFT) & leftIsPossible())
         {
             shiftLeft();
+            mergeLeft();
+            shiftLeft();
+
+            generateNewSquare();
         }
 
-        if(command.equals(RIGHTCOMMAND))
+        else if(command.equals(RIGHT) & rightIsPossible())
         {
             shiftRight();
+            mergeRight();
+            shiftRight();
+
+            generateNewSquare();
         }
 
-        if(command.equals(UPCOMMAND))
+        else if(command.equals(UP) & upIsPossible())
         {
             shiftUp();
+            mergeUp();
+            shiftUp();
+
+            generateNewSquare();
         }
 
-        if(command.equals(DOWNCOMMAND))
+        else if(command.equals(DOWN) & downIsPossible())
         {
             shiftDown();
+            mergeDown();
+            shiftDown();
+
+            generateNewSquare();
+        }
+
+        else
+        {
+            // do nothing
         }
     }
 
-    //TODO: find some way to simplify all these shift commands because holy shit
-    
     private void shiftLeft()
     {
         int shiftPos = -1;
@@ -81,33 +107,11 @@ public class Board
         {
             for(int c = 0; c < width; c++)
             {
-                if(currentState[r][c].isFilled())
-                {
-                    try
-                    {
-                        if(currentState[r][c].getSquare() == currentState[r][c + 1].getSquare())
-                        {
-                            currentState[r][c].incrementSquare();
-                            currentState[r][c + 1].deleteSquare();
-                        }
-                    }
-                    catch(ArrayIndexOutOfBoundsException e)
-                    {
-
-                    }
-                }
-            }
-        }
-
-        for(int r = 0; r < height; r++)
-        {
-            for(int c = 0; c < width; c++)
-            {
-                if(currentState[r][c].isFilled())
+                if(isFilled(r, c))
                 {
                     for(int i = c; i >= 0; i--)
                     {
-                        if(!currentState[r][i].isFilled())
+                        if(!isFilled(r, i))
                         {
                             shiftPos = i;
                         }
@@ -115,29 +119,14 @@ public class Board
 
                     if(shiftPos != -1)
                     {
-                        currentState[r][shiftPos].setSquare(currentState[r][c].getSquare());
-                        currentState[r][c].deleteSquare();
-
-                        try
-                        {
-                            if(currentState[r][shiftPos - 1].getSquare() == currentState[r][shiftPos].getSquare())
-                            {
-                                currentState[r][shiftPos - 1].incrementSquare();
-                                currentState[r][shiftPos].deleteSquare();
-                            }
-                        }
-                        catch(ArrayIndexOutOfBoundsException e)
-                        {
-
-                        }
+                        currentState[r][shiftPos] = currentState[r][c];
+                        currentState[r][c] = 0;
                     }
                 }
 
                 shiftPos = -1;
             }
         }
-
-        generateNewSquare();
     }
 
     private void shiftRight()
@@ -148,33 +137,11 @@ public class Board
         {
             for(int c = width - 1; c >= 0; c--)
             {
-                if(currentState[r][c].isFilled())
-                {
-                    try
-                    {
-                        if(currentState[r][c].getSquare() == currentState[r][c - 1].getSquare())
-                        {
-                            currentState[r][c].incrementSquare();
-                            currentState[r][c - 1].deleteSquare();
-                        }
-                    }
-                    catch(ArrayIndexOutOfBoundsException e)
-                    {
-
-                    }
-                }
-            }
-        }
-
-        for(int r = 0; r < height; r++)
-        {
-            for(int c = width - 1; c >= 0; c--)
-            {
-                if(currentState[r][c].isFilled())
+                if(isFilled(r, c))
                 {
                     for(int i = c; i < width; i++)
                     {
-                        if(!currentState[r][i].isFilled())
+                        if(!isFilled(r, i))
                         {
                             shiftPos = i;
                         }
@@ -182,29 +149,14 @@ public class Board
 
                     if(shiftPos != -1)
                     {
-                        currentState[r][shiftPos].setSquare(currentState[r][c].getSquare());
-                        currentState[r][c].deleteSquare();
-
-                        try
-                        {
-                            if(currentState[r][shiftPos + 1].getSquare() == currentState[r][shiftPos].getSquare())
-                            {
-                                currentState[r][shiftPos + 1].incrementSquare();
-                                currentState[r][shiftPos].deleteSquare();
-                            }
-                        }
-                        catch(ArrayIndexOutOfBoundsException e)
-                        {
-                            
-                        }
+                        currentState[r][shiftPos] = currentState[r][c];
+                        currentState[r][c] = 0;
                     }
                 }
 
                 shiftPos = -1;
             }
         }
-
-        generateNewSquare();
     }
 
     private void shiftUp()
@@ -215,33 +167,11 @@ public class Board
         {
             for(int c = 0; c < width; c++)
             {
-                if(currentState[r][c].isFilled())
-                {
-                    try
-                    {
-                        if(currentState[r][c].getSquare() == currentState[r + 1][c].getSquare())
-                        {
-                            currentState[r][c].incrementSquare();
-                            currentState[r + 1][c].deleteSquare();
-                        }
-                    }
-                    catch(ArrayIndexOutOfBoundsException e)
-                    {
-                        
-                    }
-                }
-            }
-        }
-
-        for(int r = 0; r < height; r++)
-        {
-            for(int c = 0; c < width; c++)
-            {
-                if(currentState[r][c].isFilled())
+                if(isFilled(r, c))
                 {
                     for(int i = r; i >= 0; i--)
                     {
-                        if(!currentState[i][c].isFilled())
+                        if(!isFilled(i, c))
                         {
                             shiftPos = i;
                         }
@@ -249,29 +179,14 @@ public class Board
 
                     if(shiftPos != -1)
                     {
-                        currentState[shiftPos][c].setSquare(currentState[r][c].getSquare());
-                        currentState[r][c].deleteSquare();
-
-                        try
-                        {
-                            if(currentState[shiftPos - 1][c].getSquare() == currentState[shiftPos][c].getSquare())
-                            {
-                                currentState[shiftPos - 1][c].incrementSquare();
-                                currentState[shiftPos][c].deleteSquare();
-                            }
-                        }
-                        catch(ArrayIndexOutOfBoundsException e)
-                        {
-
-                        }
+                        currentState[shiftPos][c] = currentState[r][c];
+                        currentState[r][c] = 0;
                     }
                 }
 
                 shiftPos = -1;
             }
         }
-
-        generateNewSquare();
     }
 
     private void shiftDown()
@@ -282,14 +197,44 @@ public class Board
         {
             for(int c = 0; c < width; c++)
             {
-                if(currentState[r][c].isFilled())
+                if(isFilled(r, c))
+                {
+                    for(int i = r; i < height; i++)
+                    {
+                        if(!isFilled(i, c))
+                        {
+                            shiftPos = i;
+                        }
+                    }
+
+                    if(shiftPos != -1)
+                    {
+                        currentState[shiftPos][c] = currentState[r][c];
+                        currentState[r][c] = 0;
+                    }
+                }
+
+                shiftPos = -1;
+            }
+        }
+    }
+
+    private void mergeLeft()
+    {
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = 0; c < width; c++)
+            {
+                if(isFilled(r, c))
                 {
                     try
                     {
-                        if(currentState[r][c].getSquare() == currentState[r - 1][c].getSquare())
+                        if(currentState[r][c] == currentState[r][c + 1])
                         {
-                            currentState[r][c].incrementSquare();
-                            currentState[r - 1][c].deleteSquare();
+                            currentState[r][c]++;
+                            currentState[r][c + 1] = 0;
+
+                            score += currentState[r][c];
                         }
                     }
                     catch(ArrayIndexOutOfBoundsException e)
@@ -299,122 +244,334 @@ public class Board
                 }
             }
         }
-        
+    }
+
+    private void mergeRight()
+    {
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = width - 1; c >= 0; c--)
+            {
+                if(isFilled(r, c))
+                {
+                    try
+                    {
+                        if(currentState[r][c] == currentState[r][c - 1])
+                        {
+                            currentState[r][c]++;
+                            currentState[r][c - 1] = 0;
+
+                            score += currentState[r][c];
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private void mergeUp()
+    {
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = 0; c < width; c++)
+            {
+                if(isFilled(r, c))
+                {
+                    try
+                    {
+                        if(currentState[r][c] == currentState[r + 1][c])
+                        {
+                            currentState[r][c]++;
+                            currentState[r + 1][c] = 0;
+
+                            score += currentState[r][c];
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private void mergeDown()
+    {
         for(int r = height - 1; r >= 0; r--)
         {
             for(int c = 0; c < width; c++)
             {
-                if(currentState[r][c].isFilled())
+                if(isFilled(r, c))
                 {
-                    for(int i = r; i < height; i++)
+                    try
                     {
-                        if(!currentState[i][c].isFilled())
+                        if(currentState[r][c] == currentState[r - 1][c])
                         {
-                            shiftPos = i;
+                            currentState[r][c]++;
+                            currentState[r - 1][c] = 0;
+
+                            score += currentState[r][c];
                         }
                     }
-                    
-                    if(shiftPos != -1)
+                    catch(ArrayIndexOutOfBoundsException e)
                     {
-                        currentState[shiftPos][c].setSquare(currentState[r][c].getSquare());
-                        currentState[r][c].deleteSquare();
-                        
-                        try
-                        {
-                            if(currentState[shiftPos + 1][c].getSquare() == currentState[shiftPos][c].getSquare())
-                            {
-                                currentState[shiftPos + 1][c].incrementSquare();
-                                currentState[shiftPos][c].deleteSquare();
-                            }
-                        }
-                        catch(ArrayIndexOutOfBoundsException e)
-                        {
-                            
-                        }
+
                     }
                 }
-                
-                shiftPos = -1;
             }
         }
-        
-        generateNewSquare();
     }
 
-    private boolean generateNewSquare()
+    private boolean isFilled(int r, int c)
+    {
+        return currentState[r][c] != 0;
+    }
+
+    private void generateNewSquare()
     {
         int h, w;
+        boolean cont = true;
 
-        while(true)
+        while(cont)
         {
             randGen.setSeed(System.nanoTime());
 
             h = randGen.nextInt(height);
             w = randGen.nextInt(width);
 
-            if(!currentState[h][w].isFilled())
+            if(!isFilled(h, w))
             {
-                currentState[h][w].generateSquare();
-                return true;
+                if(randGen.nextInt(PROBABILITY) == 0)
+                {
+                    currentState[h][w] = 2;
+                }
+                else
+                {
+                    currentState[h][w] = 1;
+                }
+
+                cont = false;
             }
         }
     }
 
-    //TODO: actually finish this
-    public boolean gameOver()
+    private boolean boardIsFilled()
     {
-        // basic case: if there is an unfilled tile, the game is not over
         for(int i = 0; i < height; i++)
         {
             for(int j = 0; j < width; j++)
             {
-                if(!currentState[i][j].isFilled())
+                if(!isFilled(i, j))
                 {
                     return false;
                 }
             }
         }
 
-        System.out.println("Game over");
         return true;
     }
 
-    public String toString()
+    private boolean leftIsPossible()
     {
-        String returnString = "";
-
-        for(int i = 0; i < height; i++)
-        {
-            for(int j = 0; j < width; j++)
-            {
-                if(currentState[i][j].getSquare() == 0)
-                {
-                    returnString += "- ";
-                }
-                else
-                {
-                    returnString += currentState[i][j].getSquare() + " ";
-                }
-            }
-
-            returnString += "\n";
-        }
-
-        return returnString;
-    }
-    
-    public int[][] getCurrentState()
-    {
-        int[][] returnArray = new int[height][width];
-        
         for(int r = 0; r < height; r++)
         {
             for(int c = 0; c < width; c++)
             {
-                returnArray[r][c] = currentState[r][c].getSquare();
+                if(isFilled(r, c))
+                {
+                    for(int i = c; i >= 0; i--)
+                    {
+                        if(!isFilled(r, i))
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
         }
 
-        return returnArray;
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = 0; c < width; c++)
+            {
+                if(isFilled(r, c))
+                {
+                    try
+                    {
+                        if(currentState[r][c] == currentState[r][c + 1])
+                        {
+                            return true;
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean rightIsPossible()
+    {
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = width - 1; c >= 0; c--)
+            {
+                if(isFilled(r, c))
+                {
+                    for(int i = c; i < width; i++)
+                    {
+                        if(!isFilled(r, i))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = width - 1; c >= 0; c--)
+            {
+                if(isFilled(r, c))
+                {
+                    try
+                    {
+                        if(currentState[r][c] == currentState[r][c - 1])
+                        {
+                            return true;
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean upIsPossible()
+    {
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = 0; c < width; c++)
+            {
+                if(isFilled(r, c))
+                {
+                    for(int i = r; i >= 0; i--)
+                    {
+                        if(!isFilled(i, c))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int r = 0; r < height; r++)
+        {
+            for(int c = 0; c < width; c++)
+            {
+                if(isFilled(r, c))
+                {
+                    try
+                    {
+                        if(currentState[r][c] == currentState[r + 1][c])
+                        {
+                            return true;
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean downIsPossible()
+    {
+        for(int r = height - 1; r >= 0; r--)
+        {
+            for(int c = 0; c < width; c++)
+            {
+                if(isFilled(r, c))
+                {
+                    for(int i = r; i < height; i++)
+                    {
+                        if(!isFilled(i, c))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int r = height - 1; r >= 0; r--)
+        {
+            for(int c = 0; c < width; c++)
+            {
+                if(isFilled(r, c))
+                {
+                    try
+                    {
+                        if(currentState[r][c] == currentState[r - 1][c])
+                        {
+                            return true;
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e)
+                    {
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean gameOver()
+    {
+        if(!boardIsFilled())
+        {
+            return false;
+        }
+
+        if(leftIsPossible() || rightIsPossible() || upIsPossible() || downIsPossible())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int[][] getCurrentState()
+    {
+        return currentState;
+    }
+
+    public int getScore()
+    {
+        return score;
+    }
+
+    public String findOptimalMove()
+    {
+        return "";
     }
 }
