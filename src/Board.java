@@ -15,7 +15,7 @@ public class Board
     public static final String RIGHT = "r";
     public static final String UP = "u";
     public static final String DOWN = "d";
-    
+
     public static final int PROBABILITY = 10;
 
     public Board(int h, int w, int exp)
@@ -631,8 +631,8 @@ public class Board
     {
         int numOfPossibilities = (int) Math.pow(4, searchDepth);
 
-        String[][] moves = new String[(int) Math.pow(4, searchDepth)][searchDepth];
-        int[] scores = new int[(int) Math.pow(4, searchDepth)];
+        String[][] moves = new String[numOfPossibilities][searchDepth];
+        int[] scores = new int[numOfPossibilities];
 
         int xPointer = 0;
         int yPointer = 0;
@@ -701,11 +701,9 @@ public class Board
         {
             searchBoard.shift(commands[i]);
 
-            if(searchBoard.gameOver())
-            {
-                return -1;
-            }
-
+            /*
+             * if(searchBoard.gameOver()) { return -1; }
+             */
         }
 
         return searchBoard.getScore();
