@@ -5,15 +5,12 @@ import javax.swing.*;
 public class GUIHandler
 {
     private static JFrame component_mainFrame;
-    private static JTextPane component_mainTextArea;
-    private static JScrollPane component_mainScrollPane;
-
-    private static GridBagConstraints constraints_mainTextArea;
+    private static JTextArea component_mainTextArea;
 
     private static final Font mainFont = new Font("Main", Font.PLAIN, 16);
 
-    private static final int BOARDHEIGHT = 4;
-    private static final int BOARDWIDTH = 4;
+    private static final int BOARDHEIGHT = 8;
+    private static final int BOARDWIDTH = 8;
 
     private static Board mainBoard;
 
@@ -21,7 +18,6 @@ public class GUIHandler
     {
         instantiate_frame();
         instantiate_components();
-        instantiate_constraints();
         instantiate_finalize();
 
         mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH, 2);
@@ -29,7 +25,7 @@ public class GUIHandler
 
         while(!mainBoard.gameOver())
         {
-            mainBoard.performOptimalMove(5);
+            mainBoard.performOptimalMove(4);
             update_text("");
         }
 
@@ -41,18 +37,15 @@ public class GUIHandler
     {
         component_mainFrame = new JFrame("2048");
         component_mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        component_mainFrame.setLayout(new GridBagLayout());
+        component_mainFrame.setLayout(new FlowLayout());
         component_mainFrame.setResizable(true);
     }
 
     private static void instantiate_components()
     {
-        component_mainTextArea = new JTextPane();
+        component_mainTextArea = new JTextArea(BOARDHEIGHT, BOARDWIDTH);
         component_mainTextArea.setEditable(false);
         component_mainTextArea.setFont(mainFont);
-        component_mainTextArea.setSize(new Dimension(BOARDHEIGHT, BOARDWIDTH));
-
-        component_mainScrollPane = new JScrollPane(component_mainTextArea);
 
         component_mainTextArea.addKeyListener(new KeyListener()
         {
@@ -98,23 +91,11 @@ public class GUIHandler
         });
     }
 
-    private static void instantiate_constraints()
-    {
-        constraints_mainTextArea = new GridBagConstraints();
-        constraints_mainTextArea.gridx = 0;
-        constraints_mainTextArea.gridy = 0;
-        constraints_mainTextArea.gridwidth = 1;
-        constraints_mainTextArea.gridheight = 1;
-        constraints_mainTextArea.ipadx = 500;
-        constraints_mainTextArea.ipady = 500;
-        constraints_mainTextArea.insets = new Insets(5, 5, 5, 5);
-        constraints_mainTextArea.fill = GridBagConstraints.BOTH;
-    }
-
     private static void instantiate_finalize()
     {
-        component_mainFrame.add(component_mainScrollPane, constraints_mainTextArea);
+        component_mainFrame.add(component_mainTextArea);
 
+        component_mainFrame.setMinimumSize(new Dimension(125 * BOARDWIDTH, 35 * BOARDHEIGHT));
         component_mainFrame.pack();
         component_mainFrame.setVisible(true);
     }
