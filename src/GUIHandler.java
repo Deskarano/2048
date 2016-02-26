@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-
 public class GUIHandler
 {
     private static JFrame component_mainFrame;
@@ -10,11 +9,11 @@ public class GUIHandler
     private static JScrollPane component_mainScrollPane;
 
     private static GridBagConstraints constraints_mainTextArea;
-    
+
     private static final Font mainFont = new Font("Main", Font.PLAIN, 16);
 
-    private static final int BOARDHEIGHT = 8;
-    private static final int BOARDWIDTH = 8;
+    private static final int BOARDHEIGHT = 4;
+    private static final int BOARDWIDTH = 4;
 
     private static Board mainBoard;
 
@@ -25,17 +24,17 @@ public class GUIHandler
         instantiate_constraints();
         instantiate_finalize();
 
-        mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH);
+        mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH, 2);
         update_text("");
-        
+
         while(!mainBoard.gameOver())
         {
-        	mainBoard.performRandomMove();
-        	update_text("");
-        }  
-        
-        System.out.println(mainBoard.getNumMoves());
-        System.out.println(mainBoard.getScore());
+            mainBoard.performOptimalMove(5);
+            update_text("");
+        }
+
+        System.out.println("Score: " + mainBoard.getScore());
+        System.out.println("Moves: " + mainBoard.getNumMoves());
     }
 
     private static void instantiate_frame()
@@ -52,51 +51,51 @@ public class GUIHandler
         component_mainTextArea.setEditable(false);
         component_mainTextArea.setFont(mainFont);
         component_mainTextArea.setSize(new Dimension(BOARDHEIGHT, BOARDWIDTH));
-        
+
         component_mainScrollPane = new JScrollPane(component_mainTextArea);
-        
+
         component_mainTextArea.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void keyPressed(KeyEvent arg0)
+            {
+                if(arg0.getKeyCode() == KeyEvent.VK_LEFT)
                 {
-                    @Override
-                    public void keyPressed(KeyEvent arg0)
-                    {
-                        if(arg0.getKeyCode() == KeyEvent.VK_LEFT)
-                        {
-                            mainBoard.shift(Board.LEFT);
-                            update_text("");
-                        }
-                        
-                        if(arg0.getKeyCode() == KeyEvent.VK_RIGHT)
-                        {
-                            mainBoard.shift(Board.RIGHT);
-                            update_text("");
-                        }
-                        
-                        if(arg0.getKeyCode() == KeyEvent.VK_UP)
-                        {
-                            mainBoard.shift(Board.UP);
-                            update_text("");
-                        }
-                        
-                        if(arg0.getKeyCode() == KeyEvent.VK_DOWN)
-                        {
-                            mainBoard.shift(Board.DOWN);
-                            update_text("");
-                        }
-                    }
+                    mainBoard.shift(Board.LEFT);
+                    update_text("");
+                }
 
-                    @Override
-                    public void keyReleased(KeyEvent e)
-                    {
+                if(arg0.getKeyCode() == KeyEvent.VK_RIGHT)
+                {
+                    mainBoard.shift(Board.RIGHT);
+                    update_text("");
+                }
 
-                    }
+                if(arg0.getKeyCode() == KeyEvent.VK_UP)
+                {
+                    mainBoard.shift(Board.UP);
+                    update_text("");
+                }
 
-                    @Override
-                    public void keyTyped(KeyEvent e)
-                    {
+                if(arg0.getKeyCode() == KeyEvent.VK_DOWN)
+                {
+                    mainBoard.shift(Board.DOWN);
+                    update_text("");
+                }
+            }
 
-                    }
-                });
+            @Override
+            public void keyReleased(KeyEvent e)
+            {
+
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+
+            }
+        });
     }
 
     private static void instantiate_constraints()
@@ -109,7 +108,7 @@ public class GUIHandler
         constraints_mainTextArea.ipadx = 500;
         constraints_mainTextArea.ipady = 500;
         constraints_mainTextArea.insets = new Insets(5, 5, 5, 5);
-        constraints_mainTextArea.fill = GridBagConstraints.BOTH;     
+        constraints_mainTextArea.fill = GridBagConstraints.BOTH;
     }
 
     private static void instantiate_finalize()
@@ -124,7 +123,7 @@ public class GUIHandler
     {
         int[][] data = mainBoard.getCurrentState();
         String printString = "";
-        
+
         for(int r = 0; r < BOARDHEIGHT; r++)
         {
             for(int c = 0; c < BOARDWIDTH; c++)
@@ -135,15 +134,15 @@ public class GUIHandler
                 }
                 else
                 {
-                    printString += (int)Math.pow(2, data[r][c]) + "\t";
-                }      
+                    printString += (int) Math.pow(mainBoard.getExponent(), data[r][c]) + "\t";
+                }
             }
-            
+
             printString += "\n";
         }
-        
+
         printString += optionalText;
-        
+
         component_mainTextArea.setText(printString);
     }
 }
