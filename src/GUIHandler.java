@@ -1,41 +1,81 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.io.*;
 
 public class GUIHandler
-{
+{   
     private static JFrame component_mainFrame;
+
     private static JTextArea component_mainTextArea;
+    private static JTextArea component_outputTextArea;
+
+    private static JScrollPane component_outputScrollPane;
+    private static String outputString;
 
     private static final Font mainFont = new Font("Main", Font.PLAIN, 16);
 
-    private static final int BOARDHEIGHT = 8;
-    private static final int BOARDWIDTH = 8;
+    private static final int BOARDHEIGHT = 4;
+    private static final int BOARDWIDTH = 4;
+    private static final int SEARCHDEPTH = 4;
 
     private static Board mainBoard;
+    private static PrintWriter fileWriter;
+    private static String name;
 
     public static void main(String[] args)
     {
+        outputString = "";
+        name = BOARDHEIGHT + "x" + BOARDWIDTH + "-" + SEARCHDEPTH;
+
+        try
+        {
+            fileWriter = new PrintWriter(name + ".txt", "UTF-8");
+        }
+        catch(FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        
         instantiate_frame();
         instantiate_components();
-        instantiate_finalize();
+        instantiate_finalize();      
 
-        mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH, 2);
-        update_text("");
+        int trial = 0;
 
-        while(!mainBoard.gameOver())
+        while(trial < 100)
         {
-            mainBoard.performOptimalMove(4);
-            update_text("");
+            trial++;
+            mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH, 2);
+
+            while(!mainBoard.gameOver())
+            {
+                mainBoard.performOptimalMove(SEARCHDEPTH);
+                update_display();
+            }
+
+            String dataString = trial + "\t" + SEARCHDEPTH + '\t' + mainBoard.getScore() + '\t'
+                    + mainBoard.getNumMoves() + '\t' + (int) Math.pow(2, mainBoard.getMaxNum()) + '\n';
+
+            outputString += dataString;
+            update_output();
+            
+            System.out.println(dataString);
+            fileWriter.println(dataString);
+            fileWriter.flush();
         }
 
-        System.out.println("Score: " + mainBoard.getScore());
-        System.out.println("Moves: " + mainBoard.getNumMoves());
+        fileWriter.close();
     }
 
+    
     private static void instantiate_frame()
     {
-        component_mainFrame = new JFrame("2048");
+        component_mainFrame = new JFrame("2048: " + name);
         component_mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         component_mainFrame.setLayout(new FlowLayout());
         component_mainFrame.setResizable(true);
@@ -47,6 +87,12 @@ public class GUIHandler
         component_mainTextArea.setEditable(false);
         component_mainTextArea.setFont(mainFont);
 
+        component_outputTextArea = new JTextArea(25, 35);
+        component_outputTextArea.setEditable(false);
+        component_outputTextArea.setFont(mainFont);
+
+        component_outputScrollPane = new JScrollPane(component_outputTextArea);
+
         component_mainTextArea.addKeyListener(new KeyListener()
         {
             @Override
@@ -55,25 +101,25 @@ public class GUIHandler
                 if(arg0.getKeyCode() == KeyEvent.VK_LEFT)
                 {
                     mainBoard.shift(Board.LEFT);
-                    update_text("");
+                    update_display();
                 }
 
                 if(arg0.getKeyCode() == KeyEvent.VK_RIGHT)
                 {
                     mainBoard.shift(Board.RIGHT);
-                    update_text("");
+                    update_display();
                 }
 
                 if(arg0.getKeyCode() == KeyEvent.VK_UP)
                 {
                     mainBoard.shift(Board.UP);
-                    update_text("");
+                    update_display();
                 }
 
                 if(arg0.getKeyCode() == KeyEvent.VK_DOWN)
                 {
                     mainBoard.shift(Board.DOWN);
-                    update_text("");
+                    update_display();
                 }
             }
 
@@ -94,13 +140,14 @@ public class GUIHandler
     private static void instantiate_finalize()
     {
         component_mainFrame.add(component_mainTextArea);
+        component_mainFrame.add(component_outputScrollPane);
 
-        component_mainFrame.setMinimumSize(new Dimension(125 * BOARDWIDTH, 35 * BOARDHEIGHT));
+        component_mainFrame.setMinimumSize(new Dimension(125 * BOARDWIDTH, 35 * BOARDHEIGHT + 250));
         component_mainFrame.pack();
         component_mainFrame.setVisible(true);
     }
 
-    private static void update_text(String optionalText)
+    private static void update_display()
     {
         int[][] data = mainBoard.getCurrentState();
         String printString = "";
@@ -122,8 +169,11 @@ public class GUIHandler
             printString += "\n";
         }
 
-        printString += optionalText;
-
         component_mainTextArea.setText(printString);
+    }
+
+    private static void update_output()
+    {
+        component_outputTextArea.setText(outputString);
     }
 }
