@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class GUIHandler
+public class GUIHandlerEC2
 {
     private static final int BOARDHEIGHT = 4;
     private static final int BOARDWIDTH = 4;
