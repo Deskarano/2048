@@ -568,12 +568,7 @@ public class Board
 
     public boolean gameOver()
     {
-        if(!boardIsFilled())
-        {
-            return false;
-        }
-
-        if(leftIsPossible() | rightIsPossible() | upIsPossible() | downIsPossible())
+        if(!boardIsFilled() | leftIsPossible() | rightIsPossible() | upIsPossible() | downIsPossible())
         {
             return false;
         }
@@ -622,10 +617,8 @@ public class Board
     public void performRandomMove()
     {
         randGen.setSeed(System.nanoTime());
-
-        int choice = randGen.nextInt(4);
-
-        switch(choice)
+        
+        switch(randGen.nextInt(4))
         {
             case 0:
             	if(leftIsPossible())
