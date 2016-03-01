@@ -1366,19 +1366,19 @@ public class Board
         switch(choice)
         {
             case 0:
-                shift(Board.LEFT);
+                shift(LEFT);
                 break;
 
             case 1:
-                shift(Board.RIGHT);
+                shift(RIGHT);
                 break;
 
             case 2:
-                shift(Board.UP);
+                shift(UP);
                 break;
 
             case 3:
-                shift(Board.DOWN);
+                shift(DOWN);
                 break;
         }
     }
@@ -1401,28 +1401,28 @@ public class Board
                 // left
                 for(int j = 0; j < numOfPossibilities / Math.pow(4, xPointer + 1); j++)
                 {
-                    moves[yPointer][xPointer] = Board.LEFT;
+                    moves[yPointer][xPointer] = LEFT;
                     yPointer++;
                 }
 
                 // right
                 for(int j = 0; j < numOfPossibilities / Math.pow(4, xPointer + 1); j++)
                 {
-                    moves[yPointer][xPointer] = Board.RIGHT;
+                    moves[yPointer][xPointer] = RIGHT;
                     yPointer++;
                 }
 
                 // up
                 for(int j = 0; j < numOfPossibilities / Math.pow(4, xPointer + 1); j++)
                 {
-                    moves[yPointer][xPointer] = Board.UP;
+                    moves[yPointer][xPointer] = UP;
                     yPointer++;
                 }
 
                 // down
                 for(int j = 0; j < numOfPossibilities / Math.pow(4, xPointer + 1); j++)
                 {
-                    moves[yPointer][xPointer] = Board.DOWN;
+                    moves[yPointer][xPointer] = DOWN;
                     yPointer++;
                 }
             }
@@ -1449,19 +1449,19 @@ public class Board
         shift(moves[indexOfMax][0]);
     }
 
-    private int findFutureScore(String[] commands)
+    private int findFutureScore(int[] commands)
     {
         Board searchBoard = new Board(currentState, exponent);
 
-        for(int i = 0; i < commands.length; i++)
+        searchBoard.shiftSeries(commands);
+        
+        /*
+        if(searchBoard.gameOver())
         {
-            searchBoard.shift(commands[i]);
-
-            /*
-             * if(searchBoard.gameOver()) { return -1; }
-             */
+            return -1;
         }
-
+        */
+        
         return searchBoard.getScore();
     }
 }
