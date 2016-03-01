@@ -4,12 +4,6 @@ public class Board
 {
     private int[][] currentState;
     private int height;
-    private int width;import java.util.Random;
-
-public class Board
-{
-    private int[][] currentState;
-    private int height;
     private int width;
     private int exponent;
     private int score;
