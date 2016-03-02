@@ -620,7 +620,7 @@ public class Board
 
 		switch(randGen.nextInt(4))
 		{
-			case 0:
+			case LEFT:
 				if(leftIsPossible())
 				{
 					shift(LEFT);
@@ -631,7 +631,7 @@ public class Board
 				}
 				break;
 
-			case 1:
+			case RIGHT:
 				if(rightIsPossible())
 				{
 					shift(RIGHT);
@@ -642,7 +642,7 @@ public class Board
 				}
 				break;
 
-			case 2:
+			case UP:
 				if(upIsPossible())
 				{
 					shift(UP);
@@ -653,7 +653,7 @@ public class Board
 				}
 				break;
 
-			case 3:
+			case DOWN:
 				if(downIsPossible())
 				{
 					shift(DOWN);
@@ -729,25 +729,49 @@ public class Board
 			}
 		}
 
-		if(moves[indexOfMax][0] == LEFT & leftIsPossible())
+		switch(moves[indexOfMax][0])
 		{
-			shift(LEFT);
-		}
-		else if(moves[indexOfMax][0] == RIGHT & rightIsPossible())
-		{
-			shift(RIGHT);
-		}
-		else if(moves[indexOfMax][0] == UP & upIsPossible())
-		{
-			shift(UP);
-		}
-		else if(moves[indexOfMax][0] == DOWN & downIsPossible())
-		{
-			shift(DOWN);
-		}
-		else
-		{
-			performRandomMove();
+			case LEFT:
+				if(leftIsPossible())
+				{
+					shift(LEFT);
+				}
+				else
+				{
+					performRandomMove();
+				}
+				break;
+				
+			case RIGHT;
+				if(rightIsPossible())
+				{
+					shift(RIGHT);
+				}
+				else
+				{
+					performRandomMove();
+				}
+				break;
+				
+			case UP:
+				if(upIsPossible())
+				{
+					shift(UP);
+				}
+				else
+				{
+					performRandomMove();
+				}
+				
+			case DOWN:
+				if(downIsPossible())
+				{
+					shift(DOWN);
+				}
+				else
+				{
+					performRandomMove();
+				}
 		}
 	}
 
