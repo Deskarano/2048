@@ -1,10 +1,10 @@
 import java.io.*;
 
-public class GUIHandlerEC2
+public class RunSimulation
 {
-    private static final int BOARDHEIGHT = 4;
-    private static final int BOARDWIDTH = 4;
-    private static final int SEARCHDEPTH = 4;
+    private static int BOARDHEIGHT = 4;
+    private static int BOARDWIDTH = 4;
+    private static int SEARCHDEPTH = 4;
 
     private static Board mainBoard;
     private static PrintWriter fileWriter;
@@ -37,14 +37,10 @@ public class GUIHandlerEC2
             while(!mainBoard.gameOver())
             {
                 mainBoard.performOptimalMove(SEARCHDEPTH);
-                //update_display();
             }
 
             String dataString = trial + "\t" + SEARCHDEPTH + '\t' + mainBoard.getScore() + '\t'
                     + mainBoard.getNumMoves() + '\t' + (int) Math.pow(2, mainBoard.getMaxNum()) + '\n';
-
-            //outputString += dataString;
-            //update_output();
             
             System.out.println(dataString);
             fileWriter.println(dataString);
