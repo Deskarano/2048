@@ -623,7 +623,7 @@ public class Board
 			case 0:
 				if(leftIsPossible())
 				{
-					shift(Board.LEFT);
+					shift(LEFT);
 				}
 				else
 				{
@@ -634,7 +634,7 @@ public class Board
 			case 1:
 				if(rightIsPossible())
 				{
-					shift(Board.RIGHT);
+					shift(RIGHT);
 				}
 				else
 				{
@@ -645,7 +645,7 @@ public class Board
 			case 2:
 				if(upIsPossible())
 				{
-					shift(Board.UP);
+					shift(UP);
 				}
 				else
 				{
@@ -656,7 +656,7 @@ public class Board
 			case 3:
 				if(downIsPossible())
 				{
-					shift(Board.DOWN);
+					shift(DOWN);
 				}
 				else
 				{
