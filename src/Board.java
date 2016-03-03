@@ -742,7 +742,7 @@ public class Board
 				}
 				break;
 				
-			case RIGHT;
+			case RIGHT:
 				if(rightIsPossible())
 				{
 					shift(RIGHT);
