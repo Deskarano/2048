@@ -734,11 +734,31 @@ public class Board
 
 		searchBoard.shiftSeries(commands);
 		
+		/*
 		if(searchBoard.gameOver())
 		{
 			return -1;
 		}
+		*/
 
-		return searchBoard.getScore();
+		return searchBoard.getScore() * searchBoard.getNumOfBlankTiles();
+	}
+	
+	public int getNumOfBlankTiles()
+	{
+		int num = 0;
+		
+		for(int r = 0; r < height; r++)
+		{
+			for(int c = 0; c < width; c++)
+			{
+				if(!isFilled(r, c))
+				{
+					num++;
+				}
+			}
+		}
+		
+		return num;
 	}
 }
