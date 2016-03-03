@@ -614,55 +614,32 @@ public class Board
 		return max;
 	}
 
+	//TODO: optimize this in case the user changes the values of LEFT, RIGHT, UP, DOWN
 	public void performRandomMove()
 	{
 		randGen.setSeed(System.nanoTime());
-
-		switch(randGen.nextInt(4))
+		
+		int nextMove = randGen.nextInt(4);
+		
+		if(nextMove == LEFT & leftIsPossible())
 		{
-			case LEFT:
-				if(leftIsPossible())
-				{
-					shift(LEFT);
-				}
-				else
-				{
-					performRandomMove();
-				}
-				break;
-
-			case RIGHT:
-				if(rightIsPossible())
-				{
-					shift(RIGHT);
-				}
-				else
-				{
-					performRandomMove();
-				}
-				break;
-
-			case UP:
-				if(upIsPossible())
-				{
-					shift(UP);
-				}
-				else
-				{
-					performRandomMove();
-				}
-				break;
-
-			case DOWN:
-				if(downIsPossible())
-				{
-					shift(DOWN);
-				}
-				else
-				{
-					performRandomMove();
-				}
-				break;
+			shift(LEFT);
+		}
+		else if(nextMove == RIGHT & rightIsPossible())
+		{
+			shift(RIGHT);
+		}
+		else if(nextMove == UP & upIsPossible())
+		{
+			shift(UP);
+		}
+		else if(nextMove == DOWN & downIsPossible())
+		{
+			shift(DOWN);
+		}
+		else
+		{
+			performRandomMove();
 		}
 	}
 
@@ -729,49 +706,25 @@ public class Board
 			}
 		}
 
-		switch(moves[indexOfMax][0])
+		if(moves[indexOfMax][0] == LEFT & leftIsPossible())
 		{
-			case LEFT:
-				if(leftIsPossible())
-				{
-					shift(LEFT);
-				}
-				else
-				{
-					performRandomMove();
-				}
-				break;
-				
-			case RIGHT:
-				if(rightIsPossible())
-				{
-					shift(RIGHT);
-				}
-				else
-				{
-					performRandomMove();
-				}
-				break;
-				
-			case UP:
-				if(upIsPossible())
-				{
-					shift(UP);
-				}
-				else
-				{
-					performRandomMove();
-				}
-				
-			case DOWN:
-				if(downIsPossible())
-				{
-					shift(DOWN);
-				}
-				else
-				{
-					performRandomMove();
-				}
+			shift(LEFT);
+		}
+		else if(moves[indexOfMax][0] == RIGHT & rightIsPossible())
+		{
+			shift(RIGHT);
+		}
+		else if(moves[indexOfMax][0] == UP & upIsPossible())
+		{
+			shift(UP);
+		}
+		else if(moves[indexOfMax][0] == DOWN & downIsPossible())
+		{
+			shift(DOWN);
+		}
+		else
+		{
+			performRandomMove();
 		}
 	}
 
