@@ -384,11 +384,11 @@ public class Board
 
 	private boolean boardIsFilled()
 	{
-		for(int i = 0; i < height; i++)
+		for(int r = 0; r < height; r++)
 		{
-			for(int j = 0; j < width; j++)
+			for(int c = 0; c < width; c++)
 			{
-				if(!isFilled(i, j))
+				if(!isFilled(r, c))
 				{
 					return false;
 				}
