@@ -63,7 +63,7 @@ public class Board
 
 	public void shift(int command)
 	{
-		if(command == LEFT & leftIsPossible())
+		if(command == LEFT && leftIsPossible())
 		{
 			numMoves++;
 
@@ -74,7 +74,7 @@ public class Board
 			generateNewSquare();
 		}
 
-		else if(command == RIGHT & rightIsPossible())
+		else if(command == RIGHT && rightIsPossible())
 		{
 			numMoves++;
 
@@ -85,7 +85,7 @@ public class Board
 			generateNewSquare();
 		}
 
-		else if(command == UP & upIsPossible())
+		else if(command == UP && upIsPossible())
 		{
 			numMoves++;
 
@@ -96,7 +96,7 @@ public class Board
 			generateNewSquare();
 		}
 
-		else if(command == DOWN & downIsPossible())
+		else if(command == DOWN && downIsPossible())
 		{
 			numMoves++;
 
@@ -568,7 +568,7 @@ public class Board
 
 	public boolean gameOver()
 	{
-		if(!boardIsFilled() | leftIsPossible() | rightIsPossible() | upIsPossible() | downIsPossible())
+		if(!boardIsFilled() || leftIsPossible() || rightIsPossible() || upIsPossible() || downIsPossible())
 		{
 			return false;
 		}
@@ -621,19 +621,19 @@ public class Board
 		
 		int nextMove = randGen.nextInt(4);
 		
-		if(nextMove == LEFT & leftIsPossible())
+		if(nextMove == LEFT && leftIsPossible())
 		{
 			shift(LEFT);
 		}
-		else if(nextMove == RIGHT & rightIsPossible())
+		else if(nextMove == RIGHT && rightIsPossible())
 		{
 			shift(RIGHT);
 		}
-		else if(nextMove == UP & upIsPossible())
+		else if(nextMove == UP && upIsPossible())
 		{
 			shift(UP);
 		}
-		else if(nextMove == DOWN & downIsPossible())
+		else if(nextMove == DOWN && downIsPossible())
 		{
 			shift(DOWN);
 		}
@@ -706,19 +706,19 @@ public class Board
 			}
 		}
 
-		if(moves[indexOfMax][0] == LEFT & leftIsPossible())
+		if(moves[indexOfMax][0] == LEFT && leftIsPossible())
 		{
 			shift(LEFT);
 		}
-		else if(moves[indexOfMax][0] == RIGHT & rightIsPossible())
+		else if(moves[indexOfMax][0] == RIGHT && rightIsPossible())
 		{
 			shift(RIGHT);
 		}
-		else if(moves[indexOfMax][0] == UP & upIsPossible())
+		else if(moves[indexOfMax][0] == UP && upIsPossible())
 		{
 			shift(UP);
 		}
-		else if(moves[indexOfMax][0] == DOWN & downIsPossible())
+		else if(moves[indexOfMax][0] == DOWN && downIsPossible())
 		{
 			shift(DOWN);
 		}
