@@ -17,7 +17,7 @@ public class GUIHandler
 
     private static final int BOARDHEIGHT = 4;
     private static final int BOARDWIDTH = 4;
-    private static final int SEARCHDEPTH = 4;
+    private static final int SEARCHDEPTH = 6;
 
     private static Board mainBoard;
     private static PrintWriter fileWriter;
@@ -50,7 +50,7 @@ public class GUIHandler
         while(trial < 100)
         {
             trial++;
-            mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH, 2);
+            mainBoard = new Board(BOARDHEIGHT, BOARDWIDTH, 2, 0);
 
             while(!mainBoard.gameOver())
             {
@@ -98,27 +98,27 @@ public class GUIHandler
             @Override
             public void keyPressed(KeyEvent arg0)
             {
-                if(arg0.getKeyCode() == KeyEvent.VK_LEFT)
+                if(arg0.getKeyCode() == KeyEvent.VK_LEFT && mainBoard.moveIsPossible(Board.LEFT))
                 {
-                    mainBoard.shift(Board.LEFT);
+                    mainBoard.move(Board.LEFT);
                     update_display();
                 }
 
-                if(arg0.getKeyCode() == KeyEvent.VK_RIGHT)
+                if(arg0.getKeyCode() == KeyEvent.VK_RIGHT && mainBoard.moveIsPossible(Board.RIGHT))
                 {
-                    mainBoard.shift(Board.RIGHT);
+                    mainBoard.move(Board.RIGHT);
                     update_display();
                 }
 
-                if(arg0.getKeyCode() == KeyEvent.VK_UP)
+                if(arg0.getKeyCode() == KeyEvent.VK_UP && mainBoard.moveIsPossible(Board.UP))
                 {
-                    mainBoard.shift(Board.UP);
+                    mainBoard.move(Board.UP);
                     update_display();
                 }
 
-                if(arg0.getKeyCode() == KeyEvent.VK_DOWN)
+                if(arg0.getKeyCode() == KeyEvent.VK_DOWN && mainBoard.moveIsPossible(Board.DOWN))
                 {
-                    mainBoard.shift(Board.DOWN);
+                    mainBoard.move(Board.DOWN);
                     update_display();
                 }
             }
