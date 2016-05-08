@@ -3,6 +3,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 
+//this comment is a test
+
 public class GUIHandler
 {   
     private static JFrame component_mainFrame;
